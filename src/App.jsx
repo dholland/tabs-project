@@ -1,30 +1,47 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Tabs from './components/Tabs';
 import Tab from './components/Tab';
-import Tab1Content from './components/TabContent1';
-import tabData from './data';
+import { tabData } from './data';
 
 export default function App() {
 	const [isActive, setIsActive] = useState(0);
-	const [tabs, setTabs] = useState({});
+	const [tabs, setTabs] = useState(tabData);
 
 	useEffect(() => {
 		setTabs(tabData);
 	}, []);
 
+	const newTab = () => {
+		setTabs((prevTabs) => {
+			return [...prevTabs, { label: 'New Tab', content: 'New Tab Conent' }];
+		});
+	};
+
+	console.log('tabs', tabs);
+
 	return (
-		<div className='w-2/3 '>
-			<Tabs setIsActive={setIsActive} isActive={isActive}>
-				<Tab isActive={isActive === 0} content={<Tab1Content />}>
-					Tab 1
-				</Tab>
-				<Tab isActive={isActive === 1} content='Content 2'>
-					Tab 2
-				</Tab>
-				<Tab isActive={isActive === 2} content='Content 3'>
-					Tab 3
-				</Tab>
-			</Tabs>
+		<div className='w-screen flex justify-center items-center'>
+			<div className='w-2/3 '>
+				<Tabs setIsActive={setIsActive} isActive={isActive}>
+					{tabs.map((tab, i) => {
+						const label = tab.label;
+						const ContentComponent = tab.component;
+						const content = tab.content;
+						if (ContentComponent) {
+							return (
+								<Tab isActive={isActive === i} content={<ContentComponent />}>
+									{label}
+								</Tab>
+							);
+						}
+						return (
+							<Tab isActive={isActive === i} content={content}>
+								{label}
+							</Tab>
+						);
+					})}
+				</Tabs>
+			</div>
 		</div>
 	);
 }
